@@ -1,0 +1,8 @@
+insert into CODE(CODE_GROUP, CODE, DESCRIPTION, CREATED_AT, UPDATED_AT) values ('TODO_STATUS', '1', 'COMPLETE', now(), now());
+insert into CODE(CODE_GROUP, CODE, DESCRIPTION, CREATED_AT, UPDATED_AT) values ('TODO_STATUS', '2', 'INCOMPLETE', now(), now());
+
+
+
+
+
+
