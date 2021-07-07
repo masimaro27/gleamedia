@@ -44,9 +44,6 @@ public class Todo {
     @OneToMany(mappedBy = "todo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TodoRefMapping> ref = new ArrayList<>();
 
-    @OneToMany(mappedBy = "todoRef", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<TodoRefMapping> origin = new ArrayList<>();
-
     public boolean isDuplRef(Todo todoRef) {
         for (TodoRefMapping refMapping : this.ref) {
             if (refMapping.getTodoRef().getIdx() == todoRef.getIdx()) {
@@ -86,10 +83,18 @@ public class Todo {
                 .createdAt(todo.getCreatedAt());
 
         if (todo.getRef() != null) {
-            List<TodoDto> ref = todo.getRef()
-                    .stream()
-                    .map(item -> Todo.toTodoDto(item.getTodoRef()))
-                    .collect(Collectors.toList());
+            List<TodoDto> ref = new ArrayList<>();
+            for(TodoRefMapping mapping: todo.getRef()) {
+                ref.add(
+                        TodoDto.builder()
+                        .idx(mapping.getTodoRef().getIdx())
+                        .content(mapping.getTodoRef().getContent())
+                        .status(mapping.getTodoRef().getStatus())
+                        .updatedAt(mapping.getTodoRef().getUpdatedAt())
+                        .createdAt(mapping.getTodoRef().getCreatedAt())
+                        .build()
+                );
+            }
             builder.ref(ref);
         }
         return builder.build();
@@ -153,10 +158,10 @@ public class Todo {
         }
     }
 
-    public void addOrigin(TodoRefMapping todoRefMapping) {
-        this.origin.add(todoRefMapping);
-        if (todoRefMapping.getTodo() == null) {
-            todoRefMapping.setTodo(this);
-        }
-    }
+//    public void addOrigin(TodoRefMapping todoRefMapping) {
+//        this.origin.add(todoRefMapping);
+//        if (todoRefMapping.getTodo() == null) {
+//            todoRefMapping.setTodo(this);
+//        }
+//    }
 }

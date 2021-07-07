@@ -44,11 +44,4 @@ public class TodoRefMapping {
             todoRef.addRef(this);
         }
     }
-
-    public void setTodo(Todo todoOrigin) {
-        this.todo = todoOrigin;
-        if (!todoOrigin.getOrigin().contains(this)) {
-            todoOrigin.addOrigin(this);
-        }
-    }
 }

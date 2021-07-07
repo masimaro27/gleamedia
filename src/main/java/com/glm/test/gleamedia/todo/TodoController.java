@@ -61,16 +61,14 @@ public class TodoController {
     @Transactional
     @PutMapping(path = "/ref/reg/{todoIdx}")
     public ResponseEntity registRefTodo(@PathVariable("todoIdx") long todoIdx, @RequestBody TodoUpdateRefDto reqDto) {
-        todoService.registRefTodo(todoIdx, reqDto.getRefTodoIdxList());
-        return ResponseEntity.ok().build();
+        Todo todo = todoService.registRefTodo(todoIdx, reqDto.getRefTodoIdxList());
+        return ResponseEntity.ok(Todo.toTodoDto(todo));
     }
 
     @PutMapping(path = "/ref/del/{todoIdx}")
     public ResponseEntity deleteRefTodo(@PathVariable("todoIdx") long todoIdx,  @RequestBody TodoUpdateRefDto reqDto) {
-        Todo todo = todoRepo.findById(todoIdx).orElseThrow(() -> new GlemRuntimeException(ExceptionCode.SERVER_ERRER));
-        List<TodoRefMapping> delItems = todo.deleteAllRefTodo(reqDto.getRefTodoIdxList());
-        todoRefMappingRepo.deleteAll(delItems);
-        return ResponseEntity.ok().build();
+        Todo todo = todoService.deleteRefTodo(todoIdx, reqDto.getRefTodoIdxList());
+        return ResponseEntity.ok(Todo.toTodoDto(todo));
     }
 
     @PutMapping(path = "/status/{todoIdx}")

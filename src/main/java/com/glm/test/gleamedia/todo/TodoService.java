@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -37,16 +38,31 @@ public class TodoService {
 
     // 수정 필요 - 쿼리가 많이 나감.
     @Transactional
-    public void registRefTodo (long todoIdx, List<Long> todoRefIdxList) {
+    public Todo registRefTodo (long todoIdx, List<Long> todoRefIdxList) {
         List<Todo> todoRefData = todoRepo.findAllById(todoRefIdxList);
         Todo todo = todoRepo.findById(todoIdx).orElseThrow(() -> new GlemRuntimeException(ExceptionCode.SERVER_ERRER));
+
+        List<TodoRefMapping> saveData = new ArrayList<>();
 
         for (Todo todoRef : todoRefData) {
             if (todo.isDuplRef(todoRef) || todo.isEqualsTodoRefIdx(todoRef.getIdx())) {
                 continue;
             }
-            todo.addRef(TodoRefMapping.of(todo, todoRef));
+            TodoRefMapping mapping = TodoRefMapping.of(todo, todoRef);
+            saveData.add(mapping);
+            todo.addRef(mapping);
         }
+
+        todoRefMappingRepo.saveAll(saveData);
+
+        return todo;
+    }
+
+    public Todo deleteRefTodo(long todoIdx, List<Long> todoRefIdxList) {
+        Todo todo = todoRepo.findById(todoIdx).orElseThrow(() -> new GlemRuntimeException(ExceptionCode.SERVER_ERRER));
+        List<TodoRefMapping> delItems = todo.deleteAllRefTodo(todoRefIdxList);
+        todoRefMappingRepo.deleteAll(delItems);
+        return todo;
     }
 
 }
