@@ -1,14 +1,16 @@
-package com.glm.test.gleamedia.todo;
+package com.glm.test.gleamedia.todo.repository;
 
+import com.glm.test.gleamedia.todo.dto.SchListReqDto;
 import com.glm.test.gleamedia.todo.entities.Todo;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TodoRepository extends JpaRepository<Todo, Long> {
+public interface TodoRepository extends JpaRepository<Todo, Long>, TodoCustomRepository {
     @Query(value = "    select " +
             "                t" +
             "           from" +

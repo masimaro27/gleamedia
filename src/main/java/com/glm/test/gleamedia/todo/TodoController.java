@@ -5,17 +5,15 @@ import com.glm.test.gleamedia.exception.GlemRuntimeException;
 import com.glm.test.gleamedia.todo.dto.*;
 import com.glm.test.gleamedia.todo.entities.Todo;
 import com.glm.test.gleamedia.todo.entities.TodoRefMapping;
-import com.glm.test.gleamedia.todo.enums.TodoStatus;
+import com.glm.test.gleamedia.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +30,8 @@ public class TodoController {
 
     @GetMapping
     public ResponseEntity<SchListResDto> fetchTodoList(SchListReqDto reqDto) {
-        Page<Todo> data = todoRepo.fetchAll(reqDto.getPageable());
+//        Page<Todo> data = todoRepo.fetchAll(reqDto.getPageable());
+        Page<Todo> data = todoRepo.fetchAllByCondition(reqDto.getPageable(), reqDto);
 
         List<TodoDto> todoDtoList = data.getContent().stream()
                 .map(item -> Todo.toTodoDto(item))
@@ -78,8 +77,8 @@ public class TodoController {
     public ResponseEntity updateTodoStatus(@PathVariable("todoIdx") long todoIdx, @RequestBody TodoUpdateStatusDto reqDto) {
         Todo todo = todoRepo.findById(todoIdx).orElseThrow(() -> new GlemRuntimeException(ExceptionCode.SERVER_ERRER));
         todo.updateStatus(reqDto.getStatus());
-        todoRepo.save(todo);
-        return ResponseEntity.ok().build();
+        todo = todoRepo.save(todo);
+        return ResponseEntity.ok(Todo.toTodoDto(todo));
     }
 
 

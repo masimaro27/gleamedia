@@ -27,12 +27,19 @@ public class TodoDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
     private List<TodoDto> ref = new ArrayList<>();
-    private List<TodoDto> origin  = new ArrayList<>();
+//    private List<TodoDto> origin  = new ArrayList<>();
 
-    public boolean hasRef() {
+    public boolean isEmptyRef() {
         if (ref == null) {
-            return false;
+            return true;
         }
-        return !ref.isEmpty();
+        return ref.isEmpty();
     }
+
+    public boolean isCompleted() {
+        return this.status.equals(TodoStatus.COMPLETE);
+    }
+
+
+
 }
