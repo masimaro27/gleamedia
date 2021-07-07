@@ -4,6 +4,7 @@ import com.glm.test.gleamedia.exception.ExceptionCode;
 import com.glm.test.gleamedia.exception.GlemRuntimeException;
 import com.glm.test.gleamedia.todo.entities.Todo;
 import com.glm.test.gleamedia.todo.entities.TodoRefMapping;
+import com.glm.test.gleamedia.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
