@@ -1,5 +1,7 @@
 package com.glm.test.gleamedia.todo.entities;
 
+import com.glm.test.gleamedia.exception.ExceptionCode;
+import com.glm.test.gleamedia.exception.GlemRuntimeException;
 import com.glm.test.gleamedia.todo.dto.TodoDto;
 import com.glm.test.gleamedia.todo.dto.TodoRegistDto;
 import com.glm.test.gleamedia.todo.entities.converters.TodoStatusConverter;
@@ -93,7 +95,14 @@ public class Todo {
         return builder.build();
     }
 
+    /**
+     * 완료 업데이트 처리 시 모든 참조태그가 완료상태여야 요청처리
+     * @param status
+     */
     public void updateStatus(TodoStatus status) {
+        if (status.equals(TodoStatus.COMPLETE) && !isAllCompletedRefTodo()) {
+            throw new GlemRuntimeException(ExceptionCode.FAIL_UPDATE_COMPLETE);
+        }
         this.status = status;
     }
 
@@ -103,6 +112,24 @@ public class Todo {
 
     public void delete() {
         this.deleteYn = true;
+    }
+
+    private boolean isAllCompletedRefTodo() {
+        if (this.ref == null || this.ref.isEmpty()) {
+            return true;
+        }
+
+        for (int i = 0; i < this.ref.size(); i++) {
+            Todo refTodo = this.ref.get(i).getTodo();
+            if (!refTodo.isCompleted()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isCompleted() {
+        return this.status.equals(TodoStatus.COMPLETE);
     }
 
     public List<TodoRefMapping> deleteAllRefTodo(List<Long> todoRefIdx) {
