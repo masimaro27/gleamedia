@@ -14,7 +14,7 @@ public class GlobalControllerAdvice {
     public ResponseEntity<?> glemRuntimeException(GlemRuntimeException gre) {
       log.info("[{}:{}] {}",gre.getCode(), gre.getMessage());
       gre.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gre);
     }
 
     @ExceptionHandler(RuntimeException.class)
